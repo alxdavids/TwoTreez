@@ -1,0 +1,26 @@
+#opening-text {
+	-fx-font-size: 14pt;
+}
+
+#info-text {
+	-fx-font-size: 11pt;
+	-fx-font-weight: bold;
+}
+
+.bp {
+	
+}
+
+.root {
+	-fx-background-color: #EBEBB0;
+}
+
+.button {
+	-fx-font-size: 24pt;
+	-fx-text-fill: #555;
+	-fx-background-color: #D6D6C5;
+}
+
+.button:hover{
+	-fx-background-color: #E0E0D1;
+}
