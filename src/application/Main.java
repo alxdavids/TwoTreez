@@ -70,7 +70,7 @@ public class Main extends Application
 				button.setDisable(true);
 			else
 				button.setOnAction( (e) -> {
-					performAction(dateModifier, primaryStage, false);
+					performAction(dateModifier, primaryStage);
 				});
 			
 			buttonGrid.add(button, i%3, i/3);
@@ -80,12 +80,12 @@ public class Main extends Application
 		BorderPane.setAlignment(buttonGrid, Pos.CENTER);
 	}
 	
-	private void performAction(int i, Stage primaryStage, boolean seeAnswers)
+	private void performAction(int i, Stage primaryStage)
 	{
 		Scene newScene = null;
 		switch(i) {
 		case 14:
-			newScene = feb14(seeAnswers, primaryStage);
+			newScene = feb14();
 			break;
 		case 15:
 			newScene = feb15();
@@ -167,7 +167,7 @@ public class Main extends Application
 		return null;
 	}
 
-	private Scene feb14(boolean seeAnswers, Stage primaryStage)
+	private Scene feb14()
 	{
 		BorderPane bp = new BorderPane();
 		VBox vb = new VBox(10);
@@ -186,51 +186,6 @@ public class Main extends Application
 	    HBox result2 = new HBox();
 	    Text result1Text = new Text("");
     	Text result2Text = new Text("");
-
-	    if (seeAnswers)
-	    {
-	    	RadioButton rb1 = (RadioButton)tg1.getSelectedToggle();
-	    	RadioButton rb2 = (RadioButton)tg2.getSelectedToggle();
-	    	String s1 = rb1.getText();
-	    	String s2 = rb2.getText();
-	    	
-	    	String s1Response = "";
-	    	String s2Response = "";
-	    	boolean success1 = false;
-	    	boolean success2 = false;
-	    	
-	    	if (s1.equals("Pride Park"))
-	    	{
-	    		s1Response = "You beat my level 1 trap of trying to get you to say Carrow Road haha, nice.";
-	    		success1 = true;
-	    	}
-	    	else if (s1.equals("Carrow Road"))
-	    		s1Response = "I knew you'd fall for this one! We didn't meet, you just *happened* to see me.";
-	    	else 
-	    		s1Response = "Are you mad?";
-	    	
-	    	if (s2.equals("Frome")) 
-	    		s2Response = "We were on our way back from here but I'm afraid it's wrong.";
-	    	else if (s2.equals("Bath")) {
-	    		s2Response = "Yessssssssss. Of course it was (it took me a while to remember).";
-	    		success2 = true;
-	    	}
-	    	else
-	    		s2Response = "Nope. You are quite largely mistaken";
-	    	
-	    	result1Text.setText(s1Response);
-	    	result2Text.setText(s2Response);
-	    	
-	    	if (success1)
-	    		result1Text.setId("success-text");
-	    	else
-	    		result1Text.setId("fail-text");
-	    	
-	    	if (success2)
-	    		result2Text.setId("success-text");
-	    	else
-	    		result2Text.setId("fail-text");
-	    }
 	    
 	    result1.getChildren().add(result1Text);
 	    result2.getChildren().add(result2Text);
@@ -251,7 +206,7 @@ public class Main extends Application
 			RadioButton rb1 = (RadioButton)tg1.getSelectedToggle();
 	    	RadioButton rb2 = (RadioButton)tg2.getSelectedToggle();
 			if (rb1 != null && rb2 != null)
-				performAction(14, primaryStage, true);
+				showAnswersFeb14(tg1, tg2, result1Text, result2Text);
 			else
 			{
 				Text errorText = new Text("You haven't selected one or more answers, jeeeez.");
@@ -266,6 +221,52 @@ public class Main extends Application
 		
 		Scene newScene = new Scene(bp,600,400);
 		return newScene;
+	}
+
+	private void showAnswersFeb14(ToggleGroup tg1, ToggleGroup tg2,
+			Text result1Text, Text result2Text) 
+	{
+		RadioButton rb1 = (RadioButton)tg1.getSelectedToggle();
+		RadioButton rb2 = (RadioButton)tg2.getSelectedToggle();
+		String s1 = rb1.getText();
+		String s2 = rb2.getText();
+		
+		String s1Response = "";
+		String s2Response = "";
+		boolean success1 = false;
+		boolean success2 = false;
+		
+		if (s1.equals("Pride Park"))
+		{
+			s1Response = "You beat my level 1 trap of trying to get you to say Carrow Road haha, nice.";
+			success1 = true;
+		}
+		else if (s1.equals("Carrow Road"))
+			s1Response = "I knew you'd fall for this one! We didn't meet, you just *happened* to see me.";
+		else 
+			s1Response = "Are you mad?";
+		
+		if (s2.equals("Frome")) 
+			s2Response = "We were on our way back from here but I'm afraid it's wrong.";
+		else if (s2.equals("Bath")) {
+			s2Response = "Yessssssssss. Of course it was (it took me a while to remember).";
+			success2 = true;
+		}
+		else
+			s2Response = "Nope. You are quite largely mistaken";
+		
+		result1Text.setText(s1Response);
+		result2Text.setText(s2Response);
+		
+		if (success1)
+			result1Text.setId("success-text");
+		else
+			result1Text.setId("fail-text");
+		
+		if (success2)
+			result2Text.setId("success-text");
+		else
+			result2Text.setId("fail-text");
 	}
 
 	private HBox radioButtonAnswers(String s1, String s2, String s3, String s4, ToggleGroup group) 
