@@ -2,13 +2,21 @@
 	-fx-font-size: 14pt;
 }
 
+#question-text {
+	-fx-font-size: 12pt;
+}
+
 #info-text {
 	-fx-font-size: 11pt;
 	-fx-font-weight: bold;
 }
 
-.bp {
-	
+#success-text {
+	-fx-text-fill: #78AB46;
+}
+
+#fail-text {
+	-fx-text-fill: #FF0000;
 }
 
 .root {
