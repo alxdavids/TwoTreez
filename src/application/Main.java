@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 
 public class Main extends Application 
 {
+	boolean errorShown = false;
 	@Override
 	public void start(Stage primaryStage) 
 	{
@@ -42,7 +43,8 @@ public class Main extends Application
 			primaryStage.setScene(openingScene);
 			primaryStage.setTitle("For while I'm gone...");
 			primaryStage.show();
-		} catch(Exception e) 
+		} 
+		catch(Exception e) 
 		{
 			e.printStackTrace();
 		}
@@ -85,27 +87,27 @@ public class Main extends Application
 		Scene newScene = null;
 		switch(i) {
 		case 14:
-			newScene = feb14();
+			newScene = feb14(primaryStage);
 			break;
 		case 15:
-			newScene = feb15();
+			newScene = feb15(primaryStage);
 			break;
 		case 16:
-			newScene = feb16();
+			newScene = feb16(primaryStage);
 		case 17:
-			newScene = feb17();
+			newScene = feb17(primaryStage);
 		case 18:
-			newScene = feb18();
+			newScene = feb18(primaryStage);
 		case 19:
-			newScene = feb19();
+			newScene = feb19(primaryStage);
 		case 20:
-			newScene = feb20();
+			newScene = feb20(primaryStage);
 		case 21:
-			newScene = feb21();
+			newScene = feb21(primaryStage);
 		case 22:
-			newScene = feb22();
+			newScene = feb22(primaryStage);
 		case 23:
-			newScene = feb23();
+			newScene = feb23(primaryStage);
 		}
 		
 		if (newScene != null)
@@ -122,56 +124,63 @@ public class Main extends Application
 		primaryStage.show();
 	}
 
-	private Scene feb23()
+	private Scene feb23(Stage primaryStage)
 	{
 		return null;
 	}
 
-	private Scene feb22()
+	private Scene feb22(Stage primaryStage)
 	{
 		return null;
 	}
 
-	private Scene feb21()
+	private Scene feb21(Stage primaryStage)
 	{
 		return null;
 	}
 
-	private Scene feb20()
+	private Scene feb20(Stage primaryStage)
 	{
 		return null;
 	}
 
-	private Scene feb19()
+	private Scene feb19(Stage primaryStage)
 	{
 		return null;
 	}
 
-	private Scene feb18()
+	private Scene feb18(Stage primaryStage)
 	{
 		return null;
 	}
 
-	private Scene feb17()
+	private Scene feb17(Stage primaryStage)
 	{
 		return null;
 	}
 
-	private Scene feb16()
+	private Scene feb16(Stage primaryStage)
 	{
 		return null;
 	}
 
-	private Scene feb15()
+	private Scene feb15(Stage primaryStage)
 	{
 		return null;
 	}
 
-	private Scene feb14()
+	private Scene feb14(Stage primaryStage)
 	{
 		BorderPane bp = new BorderPane();
 		VBox vb = new VBox(10);
 		Text text = new Text("This one's easy...");
+		
+		Button back = new Button();
+		initBackButton(back, primaryStage);		
+		HBox hbTop = new HBox(430);
+		hbTop.getChildren().add(text);
+		hbTop.getChildren().add(back);
+		
 		Text question1 = new Text("1. Where did we first meet?");
 		Text question2 = new Text("2. Where were we when I forgot to put the petrol cap back on?");
 		question1.setId("question-text");
@@ -191,7 +200,7 @@ public class Main extends Application
 	    result2.getChildren().add(result2Text);
 	    
 	    vb.setAlignment(Pos.TOP_CENTER);
-		vb.getChildren().add(text);
+		vb.getChildren().add(hbTop);
 		vb.getChildren().add(question1);
 		vb.getChildren().add(hb1);
 		vb.getChildren().add(result1);
@@ -206,12 +215,21 @@ public class Main extends Application
 			RadioButton rb1 = (RadioButton)tg1.getSelectedToggle();
 	    	RadioButton rb2 = (RadioButton)tg2.getSelectedToggle();
 			if (rb1 != null && rb2 != null)
+			{
+				if (errorShown)
+				{
+					int size = vb.getChildren().size();
+					vb.getChildren().remove(size-1); //Forgive me for all my sins...
+					errorShown = false;
+				}
 				showAnswersFeb14(tg1, tg2, result1Text, result2Text);
-			else
+			}
+			else if (!errorShown)
 			{
 				Text errorText = new Text("You haven't selected one or more answers, jeeeez.");
 				errorText.setId("fail-text");
 				vb.getChildren().add(errorText);
+				errorShown = true;
 			}
 		});
 		
@@ -221,6 +239,14 @@ public class Main extends Application
 		
 		Scene newScene = new Scene(bp,600,400);
 		return newScene;
+	}
+
+	private void initBackButton(Button back, Stage primaryStage) {
+		back.setText("Back");
+		back.setId("back-button");
+		back.setOnAction( (e) -> {
+			start(primaryStage);
+		});
 	}
 
 	private void showAnswersFeb14(ToggleGroup tg1, ToggleGroup tg2,
