@@ -124,7 +124,7 @@ public class Main extends Application
 			newScene = feb18(primaryStage);
 			break;
 		case 19:
-			newScene = feb19(primaryStage);
+			newScene = feb19(primaryStage, i);
 			break;
 		case 20:
 			newScene = feb20(primaryStage);
@@ -174,9 +174,29 @@ public class Main extends Application
 		return null;
 	}
 
-	private Scene feb19(Stage primaryStage)
+	private Scene feb19(Stage primaryStage, int i)
 	{
-		return null;
+		
+		String q1 = "1. What theorem was Mike trying to prove when he fell over in the kitchen?";
+		String q2 = "2. Whose pint glass did I break before we went out on that same night?";
+		Vector<String> answers1 = new Vector<String>();
+		Vector<String> answers2 = new Vector<>();
+		
+		String correct1 = "Pythagoras";
+		String correct2 = "Oli's";
+		String wrong1 = "Chinese Remainder thm";
+		String wrong2 = "Tom's";
+		
+		answers1.add(correct1);
+		answers1.add("FTA");
+		answers1.add(wrong1);
+		answers1.add("Fermat's last thm");
+		answers2.add("Pete's");
+		answers2.add(wrong2);
+		answers2.add(correct2);
+		answers2.add("Mike's");
+		return questionScene("Circumnavigation", q1, q2, answers1, answers2, primaryStage, i,
+								correct1, correct2, wrong1, wrong2);
 	}
 
 	private Scene feb18(Stage primaryStage)
@@ -516,6 +536,27 @@ public class Main extends Application
 			}
 			else
 				s2Response = "These aren't cool (and probably not games either for that matter).";
+		}
+		else if (i == 19)
+		{
+			if (s1.equals(correct1))
+			{
+				s1Response = "Yep, I'm guessing you picked this one as it was the only one you knew!";
+				success1 = true;
+			}
+			else if (s1.equals(wrong1))
+				s1Response = "Noooo, it is good but Mike does't possess the knowledge to prove this...";
+			else 
+				s1Response = "Not this one - you should know better!";
+
+			if (s2.equals(wrong2)) 
+				s2Response = "Tom didn't go out that night due to exams.";
+			else if (s2.equals(correct2)) {
+				s2Response = "Yes it was Oli's - it took me nearl two years to replace it...";
+				success2 = true;
+			}
+			else
+				s2Response = "Nope, I probably wouldn't have heard it the end of it had I broken one of theirs.";
 		}
 		
 		result1Text.setText(s1Response);
