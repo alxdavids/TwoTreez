@@ -6,6 +6,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -166,7 +167,29 @@ public class Main extends Application
 
 	private Scene feb15(Stage primaryStage)
 	{
-		return null;
+		BorderPane bp = new BorderPane();
+		bp.setPadding(new Insets(10,10,10,10));
+		VBox vb = new VBox(10);
+		
+		Text text = new Text("Remember, remember...");
+		String s = "\n\n\nI'll pick a penny from your ear,\nAnd endless laugh, the longest tear,\n"
+				+ "Will never make up for that first time,\nI made your heart beat faster than mine\n"
+				+ "So now I want you to take the fall,\nMake my heart beat slower than them all,\n"
+				+ "And I'll go back to that perfect scene,\nForever and ever, evergreen,\n"
+				+ "When I picked a penny from your ear,...\n";
+		Text poem = new Text(s);
+		TextField line = new TextField();
+		Text question = new Text("Whats the last line??");
+		question.setId("info-text");
+		
+		vb.getChildren().add(poem);
+		vb.getChildren().add(question);
+		vb.getChildren().add(line);
+		bp.setTop(text);
+		bp.setCenter(vb);
+		
+		Scene newScene = new Scene(bp,600,400);
+		return newScene;
 	}
 
 	private Scene feb14(Stage primaryStage)
