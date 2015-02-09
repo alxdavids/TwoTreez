@@ -18,6 +18,23 @@ import javafx.stage.Stage;
 
 public class Main extends Application 
 {
+	private static final String FEB_15_POEM_LAST_LINE = "And you didn't know how I did it.";
+	public enum CssId {
+		SUCCESS_TEXT("success-text"), FAIL_TEXT("fail-text"), OPENING_TEXT("opening-text"), 
+		QUESTION_TEXT("question-text"),	INFO_TEXT("info_text");
+		
+		private String cssId;
+		
+		private CssId(String cssId)
+		{
+			this.cssId = cssId;
+		}
+		public String getCssId()
+		{
+			return cssId;
+		}
+	}
+	
 	boolean errorShown = false;
 	@Override
 	public void start(Stage primaryStage) 
@@ -28,8 +45,8 @@ public class Main extends Application
 			Text text = new Text("I may not be here, but I made this to make up for my lack of presence.");
 			Text terribleCss = new Text("Forgive my terrible CSS...");
 			Text info = new Text("I've made a thing for each day that I'm gone.\nYou'll only be able to access each one after\nthat date so you can't cheat!");
-			info.setId("info-text");
-			text.setId("opening-text");
+			info.setId(CssId.INFO_TEXT.getCssId());
+			text.setId(CssId.OPENING_TEXT.getCssId());
 			root.setTop(text);
 			
 			BorderPane.setAlignment(text, Pos.CENTER);
@@ -171,7 +188,13 @@ public class Main extends Application
 		bp.setPadding(new Insets(10,10,10,10));
 		VBox vb = new VBox(10);
 		
+		HBox header = new HBox(390);
+		Button backButton = new Button();
+		initBackButton(backButton, primaryStage);
 		Text text = new Text("Remember, remember...");
+		header.getChildren().add(text);
+		header.getChildren().add(backButton);		
+		
 		String s = "\n\n\nI'll pick a penny from your ear,\nAnd endless laugh, the longest tear,\n"
 				+ "Will never make up for that first time,\nI made your heart beat faster than mine\n"
 				+ "So now I want you to take the fall,\nMake my heart beat slower than them all,\n"
@@ -180,15 +203,43 @@ public class Main extends Application
 		Text poem = new Text(s);
 		TextField line = new TextField();
 		Text question = new Text("Whats the last line??");
-		question.setId("info-text");
+		question.setId(CssId.INFO_TEXT.getCssId());
+		
+		Text result = new Text();
+		result.setId(CssId.SUCCESS_TEXT.getCssId());
+		
+		Button submit = new Button();
+		submit.setText("Submit answers...");
+		submit.setOnAction( (e) -> {
+			String answer = line.getText();
+			if (!errorShown)
+			{
+				if (answer.equals(FEB_15_POEM_LAST_LINE))
+				{
+					result.setText("Congratulations, you remember a lot of stuff! Although"
+							+ " I suspect you didn't get it right on\nyour first attempt...");
+					result.setId(CssId.SUCCESS_TEXT.getCssId());
+				}
+				else
+				{
+					result.setText("Nope. You have to go back to first year of uni when I wrote "
+								+ "this one so it was bordering on an\nunfair question haha."
+								+ " Try writing: '" + FEB_15_POEM_LAST_LINE + "'");
+					result.setId(CssId.FAIL_TEXT.getCssId());
+				}
+			}
+		});
 		
 		vb.getChildren().add(poem);
 		vb.getChildren().add(question);
 		vb.getChildren().add(line);
-		bp.setTop(text);
+		vb.getChildren().add(result);
+		bp.setTop(header);
 		bp.setCenter(vb);
+		bp.setBottom(submit);
+		BorderPane.setAlignment(submit, Pos.CENTER);
 		
-		Scene newScene = new Scene(bp,600,400);
+		Scene newScene = new Scene(bp,600,420);
 		return newScene;
 	}
 
@@ -206,8 +257,8 @@ public class Main extends Application
 		
 		Text question1 = new Text("1. Where did we first meet?");
 		Text question2 = new Text("2. Where were we when I forgot to put the petrol cap back on?");
-		question1.setId("question-text");
-		question2.setId("question-text");
+		question1.setId(CssId.QUESTION_TEXT.getCssId());
+		question2.setId(CssId.QUESTION_TEXT.getCssId());
 		
 		ToggleGroup tg1 = new ToggleGroup();
 		ToggleGroup tg2 = new ToggleGroup();
@@ -250,7 +301,7 @@ public class Main extends Application
 			else if (!errorShown)
 			{
 				Text errorText = new Text("You haven't selected one or more answers, jeeeez.");
-				errorText.setId("fail-text");
+				errorText.setId(CssId.FAIL_TEXT.getCssId());
 				vb.getChildren().add(errorText);
 				errorShown = true;
 			}
@@ -308,14 +359,14 @@ public class Main extends Application
 		result2Text.setText(s2Response);
 		
 		if (success1)
-			result1Text.setId("success-text");
+			result1Text.setId(CssId.SUCCESS_TEXT.getCssId());
 		else
-			result1Text.setId("fail-text");
+			result1Text.setId(CssId.FAIL_TEXT.getCssId());
 		
 		if (success2)
-			result2Text.setId("success-text");
+			result2Text.setId(CssId.SUCCESS_TEXT.getCssId());
 		else
-			result2Text.setId("fail-text");
+			result2Text.setId(CssId.FAIL_TEXT.getCssId());
 	}
 
 	private HBox radioButtonAnswers(String s1, String s2, String s3, String s4, ToggleGroup group) 
