@@ -40,6 +40,8 @@ public class Main extends Application
 	}
 	
 	boolean errorShown = false;
+	boolean tf2Shown = false;
+	int counter = 0;
 	@Override
 	public void start(Stage primaryStage) 
 	{
@@ -170,13 +172,108 @@ public class Main extends Application
 	}
 
 	private Scene feb20(Stage primaryStage)
-	{
-		return null;
+	{		
+		VBox vb = new VBox(10);
+		HBox hb = new HBox(410);
+		
+		Text text = new Text("It's just a day...");
+		text.setId(CssId.QUESTION_TEXT.getCssId());
+		Button back = new Button();
+		initBackButton(back, primaryStage);
+		
+		hb.getChildren().add(text);
+		hb.getChildren().add(back);
+		
+		TextField tf1 = new TextField();
+		Text resp1 = new Text("");
+		Text hint1 = new Text("");
+		
+		Text text2 = new Text("");
+		TextField tf2 = new TextField();
+		Text resp2 = new Text("");
+		Text hint2 = new Text("");
+		
+		Button submit = new Button();
+		submit.setText("Submit answers...");
+		submit.setOnAction( (e) -> {
+			String line = tf1.getText();
+			if (!line.isEmpty() || !tf2Shown)
+			{
+				if (!tf2Shown)
+				{
+					if (line.equalsIgnoreCase("ALL BY MYSELF"))
+					{
+						resp1.setText("Wooooo. Warwick Summer Party, how could you forget?");
+						resp1.setId(CssId.SUCCESS_TEXT.getCssId());
+						text2.setText("He's got a brand new car...");
+						text2.setId(CssId.QUESTION_TEXT.getCssId());
+						vb.getChildren().remove(vb.getChildren().size()-1);
+						vb.getChildren().remove(vb.getChildren().size()-1); //Oh god...
+						vb.getChildren().add(text2);
+						vb.getChildren().add(tf2);
+						vb.getChildren().add(resp2);
+						vb.getChildren().add(hint2);
+						vb.getChildren().add(submit);
+						tf2Shown = true;
+					}
+					else
+					{
+						counter++;
+						if (counter<2)
+						{
+							resp1.setText(":(");
+						}
+						else if (counter<3)
+						{
+							resp1.setText(":(");
+							hint1.setText("Hint: think Feeder");
+						}
+						else
+						{
+							resp1.setText(":(");
+							hint1.setText("Try: ALL BY MYSELF");
+						}
+						resp1.setId(CssId.FAIL_TEXT.getCssId());
+						hint1.setId(CssId.FAIL_TEXT.getCssId());
+					}
+				}
+				else
+				{
+					String line2 = tf2.getText();
+					if (!line2.isEmpty())
+					{
+						if (line2.equalsIgnoreCase("LOOKS LIKE A JAGUAR"))
+						{
+							resp2.setText("Excellent work! :)");
+							resp2.setId(CssId.SUCCESS_TEXT.getCssId());
+							vb.getChildren().remove(vb.getChildren().size()-2);
+						}
+						else
+						{
+							resp2.setText(":(");
+							hint2.setText("Try: LOOKS LIKE A JAGUAR");
+							resp2.setId(CssId.FAIL_TEXT.getCssId());
+							hint2.setId(CssId.FAIL_TEXT.getCssId());
+						}
+					}
+				}
+			}
+		});
+		
+		vb.getChildren().add(hb);
+		vb.getChildren().add(tf1);
+		vb.getChildren().add(resp1);
+		vb.getChildren().add(hint1);
+		vb.getChildren().add(submit);
+		
+		vb.setPadding(new Insets(10,10,10,10));
+		
+		Scene gs = new Scene(vb, 600, 400);
+		return gs;
 	}
 
 	private Scene feb19(Stage primaryStage, int i)
 	{
-		
 		String q1 = "1. What theorem was Mike trying to prove when he fell over in the kitchen?";
 		String q2 = "2. Whose pint glass did I break before we went out on that same night?";
 		Vector<String> answers1 = new Vector<String>();
@@ -343,9 +440,9 @@ public class Main extends Application
 		submit.setText("Submit answers...");
 		submit.setOnAction( (e) -> {
 			String answer = line.getText();
-			if (!errorShown)
+			if (!errorShown && !answer.isEmpty())
 			{
-				if (answer.equals(FEB_15_POEM_LAST_LINE))
+				if (answer.equalsIgnoreCase(FEB_15_POEM_LAST_LINE))
 				{
 					result.setText("Congratulations, you remember a lot of stuff! Although"
 							+ " I suspect you didn't get it right on\nyour first attempt...");
@@ -478,6 +575,8 @@ public class Main extends Application
 		back.setId("back-button");
 		back.setOnAction( (e) -> {
 			start(primaryStage);
+			tf2Shown = false;
+			counter = 0;
 		});
 	}
 
