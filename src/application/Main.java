@@ -1,5 +1,7 @@
 package application;
 	
+import java.util.Vector;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -8,6 +10,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -105,27 +109,35 @@ public class Main extends Application
 		Scene newScene = null;
 		switch(i) {
 		case 14:
-			newScene = feb14(primaryStage);
+			newScene = feb14(primaryStage, i);
 			break;
 		case 15:
 			newScene = feb15(primaryStage);
 			break;
 		case 16:
 			newScene = feb16(primaryStage);
+			break;
 		case 17:
-			newScene = feb17(primaryStage);
+			newScene = feb17(primaryStage, i);
+			break;
 		case 18:
 			newScene = feb18(primaryStage);
+			break;
 		case 19:
 			newScene = feb19(primaryStage);
+			break;
 		case 20:
 			newScene = feb20(primaryStage);
+			break;
 		case 21:
 			newScene = feb21(primaryStage);
+			break;
 		case 22:
 			newScene = feb22(primaryStage);
+			break;
 		case 23:
 			newScene = feb23(primaryStage);
+			break;
 		}
 		
 		if (newScene != null)
@@ -169,17 +181,116 @@ public class Main extends Application
 
 	private Scene feb18(Stage primaryStage)
 	{
-		return null;
+		VBox vb = new VBox(20);
+		HBox hb = new HBox(340);
+		
+		BorderPane bp = new BorderPane();
+		
+		Image saul = new Image(this.getClass().getResource("saul.png").toString());
+		ImageView iv = new ImageView(saul);
+		
+		Text question = new Text("Against which team did Saul Deeney score this famous goal?");
+		ToggleGroup tg1 = new ToggleGroup();
+		HBox hb1 = radioButtonAnswers("Germany", "World XI", "Borussia Dortmund", "Bayern Munich", tg1);
+		Text response = new Text();
+		
+		Text header = new Text("You're so 2010...");
+		Button back = new Button();
+		initBackButton(back, primaryStage);
+		hb.getChildren().add(header);
+		hb.getChildren().add(back);
+		
+		Button submit = new Button();
+		submit.setText("Submit answers...");
+		submit.setOnAction( (e) -> {
+			RadioButton rb1 = (RadioButton)tg1.getSelectedToggle();
+			if (rb1 != null)
+			{
+				errorShown = false;
+				String answer = rb1.getText();
+				if (answer.equals("Bayern Munich"))
+				{
+					response.setText("Correct. He went on to inspire a famous comeback from 3-1 down against England.");
+					response.setId(CssId.SUCCESS_TEXT.getCssId());
+				}
+				else
+				{
+					response.setText("Noooooo! You can't have forgotten such a majestic performance??");
+					response.setId(CssId.FAIL_TEXT.getCssId());
+				}
+			}
+			else if (!errorShown)
+			{
+				response.setText("You haven't selected an answer...");
+				response.setId(CssId.FAIL_TEXT.getCssId());
+				errorShown = true;
+			}
+		});
+		
+		bp.setTop(hb);
+		vb.getChildren().add(iv);
+		vb.getChildren().add(question);
+		vb.getChildren().add(hb1);
+		vb.getChildren().add(response);
+		vb.setAlignment(Pos.CENTER);
+		bp.setCenter(vb);
+		bp.setBottom(submit);
+		BorderPane.setAlignment(submit, Pos.CENTER);
+		bp.setPadding(new Insets(15,15,15,15));
+		
+		Scene gs = new Scene(bp, 530, 550);
+		return gs;
 	}
 
-	private Scene feb17(Stage primaryStage)
+	private Scene feb17(Stage primaryStage, int i)
 	{
-		return null;
+		String q1 = "1. Where did we first see Derby win away in the league?";
+		String q2 = "2. What is this cool game?";
+		Vector<String> answers1 = new Vector<String>();
+		Vector<String> answers2 = new Vector<>();
+		
+		String correct1 = "Peterborough";
+		String correct2 = "A holepunch";
+		String wrong1 = "Doncaster";
+		String wrong2 = "A stapler";
+		
+		answers1.add(correct1);
+		answers1.add(wrong1);
+		answers1.add("Sheffield United");
+		answers1.add("Barnsley");
+		answers2.add("A set square");
+		answers2.add(correct2);
+		answers2.add("A sharpener");
+		answers2.add(wrong2);
+		return questionScene("More questions...", q1, q2, answers1, answers2, primaryStage, i,
+								correct1, correct2, wrong1, wrong2);
 	}
 
 	private Scene feb16(Stage primaryStage)
 	{
-		return null;
+		BorderPane bp = new BorderPane();
+		BorderPane center = new BorderPane();
+		bp.setPadding(new Insets(5,5,5,5));
+		center.setPadding(new Insets(5,5,5,5));
+		
+		Text text = new Text("I thought that the questions may be getting pretty intense, "
+							+ "so today is just a picture :)");
+		text.setId(CssId.QUESTION_TEXT.getCssId());
+		Button back = new Button();
+		initBackButton(back, primaryStage);
+		HBox hBoxTop = new HBox(50);
+		hBoxTop.getChildren().add(text);
+		hBoxTop.getChildren().add(back);
+				
+		Image picture = new Image(this.getClass().getResource("picture1.png").toString());
+		ImageView iv = new ImageView(picture);
+		center.setCenter(iv);
+		
+		bp.setTop(hBoxTop);
+		bp.setCenter(center);
+		
+		Scene scene = new Scene(bp, 720, 450);
+		return scene;
 	}
 
 	private Scene feb15(Stage primaryStage)
@@ -195,8 +306,8 @@ public class Main extends Application
 		header.getChildren().add(text);
 		header.getChildren().add(backButton);		
 		
-		String s = "\n\n\nI'll pick a penny from your ear,\nAnd endless laugh, the longest tear,\n"
-				+ "Will never make up for that first time,\nI made your heart beat faster than mine\n"
+		String s = "\n\n\nI'll pick a penny from your ear,\nAn endless laugh, the longest tear,\n"
+				+ "Will never make up for that first time,\nI made your heart beat faster than mine,\n"
 				+ "So now I want you to take the fall,\nMake my heart beat slower than them all,\n"
 				+ "And I'll go back to that perfect scene,\nForever and ever, evergreen,\n"
 				+ "When I picked a penny from your ear,...\n";
@@ -243,11 +354,37 @@ public class Main extends Application
 		return newScene;
 	}
 
-	private Scene feb14(Stage primaryStage)
+	private Scene feb14(Stage primaryStage, int i)
+	{
+		String q1 = "1. Where did we first meet?";
+		String q2 = "2. Where were we when I forgot to put the petrol cap back on?";
+		Vector<String> answers1 = new Vector<String>();
+		Vector<String> answers2 = new Vector<>();
+		
+		String correct1 = "Pride Park";
+		String correct2 = "Bath";
+		String wrong1 = "Carrow Road";
+		String wrong2 = "Frome";
+		
+		answers1.add("Westfield Derby");
+		answers1.add(correct1);
+		answers1.add(wrong1);
+		answers1.add("Molineux");
+		answers2.add(wrong2);
+		answers2.add("Nottingham");
+		answers2.add("Somewhere in Wales");
+		answers2.add(correct2);
+		return questionScene("This one's easy...", q1, q2, answers1, answers2, primaryStage, i,
+								correct1, correct2, wrong1, wrong2);
+	}
+	
+	private Scene questionScene(String header, String question1String, String question2String,
+								Vector<String> answers1, Vector<String> answers2, Stage primaryStage, 
+								int i, String correct1, String correct2, String wrong1, String wrong2)
 	{
 		BorderPane bp = new BorderPane();
 		VBox vb = new VBox(10);
-		Text text = new Text("This one's easy...");
+		Text text = new Text(header);
 		
 		Button back = new Button();
 		initBackButton(back, primaryStage);		
@@ -255,15 +392,15 @@ public class Main extends Application
 		hbTop.getChildren().add(text);
 		hbTop.getChildren().add(back);
 		
-		Text question1 = new Text("1. Where did we first meet?");
-		Text question2 = new Text("2. Where were we when I forgot to put the petrol cap back on?");
+		Text question1 = new Text(question1String);
+		Text question2 = new Text(question2String);
 		question1.setId(CssId.QUESTION_TEXT.getCssId());
 		question2.setId(CssId.QUESTION_TEXT.getCssId());
 		
 		ToggleGroup tg1 = new ToggleGroup();
 		ToggleGroup tg2 = new ToggleGroup();
-		HBox hb1 = radioButtonAnswers("Westfield Derby", "Pride Park", "Carrow Road", "Molineux", tg1);
-		HBox hb2 = radioButtonAnswers("Frome", "Nottingham", "Somewhere in Wales", "Bath", tg2);
+		HBox hb1 = radioButtonAnswers(answers1.elementAt(0), answers1.elementAt(1), answers1.elementAt(2), answers1.elementAt(3), tg1);
+		HBox hb2 = radioButtonAnswers(answers2.elementAt(0), answers2.elementAt(1), answers2.elementAt(2), answers2.elementAt(3), tg2);
 		
 	    HBox result1 = new HBox();
 	    HBox result2 = new HBox();
@@ -296,7 +433,8 @@ public class Main extends Application
 					vb.getChildren().remove(size-1); //Forgive me for all my sins...
 					errorShown = false;
 				}
-				showAnswersFeb14(tg1, tg2, result1Text, result2Text);
+				showAnswers(tg1, tg2, result1Text, result2Text, i, correct1,
+							wrong1, correct2, wrong2);
 			}
 			else if (!errorShown)
 			{
@@ -323,8 +461,9 @@ public class Main extends Application
 		});
 	}
 
-	private void showAnswersFeb14(ToggleGroup tg1, ToggleGroup tg2,
-			Text result1Text, Text result2Text) 
+	private void showAnswers(ToggleGroup tg1, ToggleGroup tg2,
+			Text result1Text, Text result2Text, int i, String correct1, 
+			String wrong1, String correct2, String wrong2) 
 	{
 		RadioButton rb1 = (RadioButton)tg1.getSelectedToggle();
 		RadioButton rb2 = (RadioButton)tg2.getSelectedToggle();
@@ -336,24 +475,48 @@ public class Main extends Application
 		boolean success1 = false;
 		boolean success2 = false;
 		
-		if (s1.equals("Pride Park"))
+		if (i == 14)
 		{
-			s1Response = "You beat my level 1 trap of trying to get you to say Carrow Road haha, nice.";
-			success1 = true;
+			if (s1.equals(correct1))
+			{
+				s1Response = "You beat my level 1 trap of trying to get you to say Carrow Road haha, nice.";
+				success1 = true;
+			}
+			else if (s1.equals(wrong1))
+				s1Response = "I knew you'd fall for this one! We didn't meet, you just *happened* to see me.";
+			else 
+				s1Response = "Are you mad?";
+
+			if (s2.equals(wrong2)) 
+				s2Response = "We were on our way back from here but I'm afraid it's wrong.";
+			else if (s2.equals(correct2)) {
+				s2Response = "Yessssssssss. Of course it was (it took me a while to remember).";
+				success2 = true;
+			}
+			else
+				s2Response = "Nope. You are quite largely mistaken";
 		}
-		else if (s1.equals("Carrow Road"))
-			s1Response = "I knew you'd fall for this one! We didn't meet, you just *happened* to see me.";
-		else 
-			s1Response = "Are you mad?";
-		
-		if (s2.equals("Frome")) 
-			s2Response = "We were on our way back from here but I'm afraid it's wrong.";
-		else if (s2.equals("Bath")) {
-			s2Response = "Yessssssssss. Of course it was (it took me a while to remember).";
-			success2 = true;
+		else if (i == 17)
+		{
+			if (s1.equals(correct1))
+			{
+				s1Response = "Yessss, you should have a look through the fixtures when Clough was manager. So many defeats...";
+				success1 = true;
+			}
+			else if (s1.equals(wrong1))
+				s1Response = "Nope, I'm afraid this was in 2014 - double denial.";
+			else 
+				s1Response = "Still no, I really hope you didn't choose one of these.";
+
+			if (s2.equals(wrong2)) 
+				s2Response = "It has a similar function but this isn't as cool as the right answer...";
+			else if (s2.equals(correct2)) {
+				s2Response = "Of course, the coolest of all cool games";
+				success2 = true;
+			}
+			else
+				s2Response = "These aren't cool (and probably not games either for that matter).";
 		}
-		else
-			s2Response = "Nope. You are quite largely mistaken";
 		
 		result1Text.setText(s1Response);
 		result2Text.setText(s2Response);
