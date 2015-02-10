@@ -168,7 +168,56 @@ public class Main extends Application
 
 	private Scene feb21(Stage primaryStage)
 	{
-		return null;
+		BorderPane bp = new BorderPane();
+		bp.setPadding(new Insets(25,25,25,25));
+		VBox vb = new VBox(10);
+		
+		HBox hb = new HBox(430);
+		Text header = new Text("Churros...");
+		Button back = new Button();
+		initBackButton(back, primaryStage);
+		hb.getChildren().add(header);
+		hb.getChildren().add(back);
+		
+		Text question = new Text("What is the name of the place at the red marker?");
+		question.setId(CssId.QUESTION_TEXT.getCssId());
+		Image img = new Image(this.getClass().getResource("barCop.png").toString());
+		ImageView iv = new ImageView(img);
+		TextField tf = new TextField();
+		Text resp = new Text();
+		
+		vb.getChildren().add(question);
+		vb.getChildren().add(iv);
+		vb.getChildren().add(tf);
+		vb.getChildren().add(resp);
+		vb.setAlignment(Pos.CENTER);
+		
+		Button submit = new Button();
+		submit.setText("Submit answers...");
+		submit.setOnAction( (e) -> {
+			String line = tf.getText();
+			if (!line.isEmpty())
+			{
+				if (line.equalsIgnoreCase("Ølbaren"))
+				{
+					resp.setText("Ja, godt gået!");
+					resp.setId(CssId.SUCCESS_TEXT.getCssId());
+				}
+				else
+				{
+					resp.setText("Nope - think about bars and Ø's.");
+					resp.setId(CssId.FAIL_TEXT.getCssId());
+				}
+			}
+		});
+		
+		bp.setTop(hb);
+		bp.setCenter(vb);
+		bp.setBottom(submit);
+		BorderPane.setAlignment(submit, Pos.CENTER);
+		
+		Scene s = new Scene(bp, 600, 550);
+		return s;
 	}
 
 	private Scene feb20(Stage primaryStage)
@@ -379,7 +428,7 @@ public class Main extends Application
 		answers2.add(correct2);
 		answers2.add("A sharpener");
 		answers2.add(wrong2);
-		return questionScene("More questions...", q1, q2, answers1, answers2, primaryStage, i,
+		return questionScene("A long time coming", q1, q2, answers1, answers2, primaryStage, i,
 								correct1, correct2, wrong1, wrong2);
 	}
 
@@ -430,7 +479,7 @@ public class Main extends Application
 				+ "When I picked a penny from your ear,...\n";
 		Text poem = new Text(s);
 		TextField line = new TextField();
-		Text question = new Text("Whats the last line??");
+		Text question = new Text("What is the last line??");
 		question.setId(CssId.INFO_TEXT.getCssId());
 		
 		Text result = new Text();
@@ -505,7 +554,7 @@ public class Main extends Application
 		
 		Button back = new Button();
 		initBackButton(back, primaryStage);		
-		HBox hbTop = new HBox(430);
+		HBox hbTop = new HBox(420);
 		hbTop.getChildren().add(text);
 		hbTop.getChildren().add(back);
 		
