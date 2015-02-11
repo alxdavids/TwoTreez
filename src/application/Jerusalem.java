@@ -1,7 +1,17 @@
 package application;
 	
+import java.awt.Desktop;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Vector;
 
+import application.Main.FilePaths;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -20,7 +30,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 
-public class Main extends Application 
+public class Jerusalem extends Application 
 {
 	private static final String FEB_15_POEM_LAST_LINE = "And you didn't know how I did it.";
 	public enum CssId {
@@ -40,6 +50,7 @@ public class Main extends Application
 	}
 	
 	boolean errorShown = false;
+	boolean timesShown = false;
 	boolean tf2Shown = false;
 	int counter = 0;
 	@Override
@@ -63,7 +74,7 @@ public class Main extends Application
 			BorderPane.setAlignment(info, Pos.CENTER_RIGHT);
 			
 			Scene openingScene = new Scene(root,600,400);
-			openingScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			openingScene.getStylesheets().add(getClass().getResource("treez.css").toExternalForm());
 			primaryStage.setScene(openingScene);
 			primaryStage.setTitle("For while I'm gone...");
 			primaryStage.show();
@@ -126,7 +137,7 @@ public class Main extends Application
 			newScene = feb18(primaryStage);
 			break;
 		case 19:
-			newScene = feb19(primaryStage, i);
+			newScene = feb19(primaryStage);
 			break;
 		case 20:
 			newScene = feb20(primaryStage);
@@ -135,7 +146,7 @@ public class Main extends Application
 			newScene = feb21(primaryStage);
 			break;
 		case 22:
-			newScene = feb22(primaryStage);
+			newScene = feb22(primaryStage, i);
 			break;
 		case 23:
 			newScene = feb23(primaryStage);
@@ -144,7 +155,7 @@ public class Main extends Application
 		
 		if (newScene != null)
 		{
-			newScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			newScene.getStylesheets().add(getClass().getResource("treez.css").toExternalForm());
 		}
 		else
 		{
@@ -161,9 +172,107 @@ public class Main extends Application
 		return null;
 	}
 
-	private Scene feb22(Stage primaryStage)
-	{
-		return null;
+	private Scene feb19(Stage primaryStage)
+	{		
+		VBox vb = new VBox(15);
+		vb.setPadding(new Insets(15,15,15,15));
+		Text header = new Text("I'll race you...");
+		Button back = new Button();
+		initBackButton(back, primaryStage);
+		HBox hb = new HBox(445);
+		hb.getChildren().add(header);
+		hb.getChildren().add(back);
+		
+		Text challenge = new Text("This one is slightly different...\nYou need to beat my time which is 10.21 seconds (short mode)\n\n\n(When you press start, the window may appear behind this one)");
+		Text info = new Text("When you're done close the game and press the submit times button.");
+		challenge.setId(CssId.QUESTION_TEXT.getCssId());
+		
+		vb.getChildren().add(hb);
+		vb.getChildren().add(challenge);
+		vb.getChildren().add(info);
+		
+		Button start = new Button();
+		start.setText("Start!");
+		start.setOnAction( (f) -> {
+			try {
+				Application dragFxInstance = Main.class.newInstance();
+				Stage newStage = new Stage();
+				dragFxInstance.start(newStage);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+		
+		Button submitTime = new Button();
+		submitTime.setText("Submit times...");
+		submitTime.setOnAction( (e) -> {
+			File file = new File("D:\\DragFx\\Leaderboard.txt");
+			
+			if (!file.exists())
+			{
+			    return;
+			}
+			
+			try (BufferedReader br = new BufferedReader(new FileReader(file)))
+			{		    
+				boolean found = false;
+				while (!found)
+				{
+					String line = br.readLine();
+
+					int indexOfName = line.indexOf(":");
+					int indexOfTime = line.indexOf(":", indexOfName+1);
+					int indexOfType = line.lastIndexOf(":");
+					int indexOfTypeString = line.indexOf("Type:");
+
+					if (indexOfName > -1)
+					{
+						String timeString = line.substring(indexOfTime+1, indexOfTypeString-1);
+						String typeString = line.substring(indexOfType+1);
+						String timeTrimmed = timeString.trim();
+						typeString = typeString.trim();
+
+						if (typeString.equals("short"))
+						{
+							found = true;
+							Text resp = new Text("Your best time was: " + timeTrimmed);
+							Text resp1 = new Text();
+							Double time = Double.parseDouble(timeTrimmed);
+							if (time <= 10.21)
+							{
+								resp1.setText("I concede that you are the finer player! Damn you...");
+								resp.setId(CssId.SUCCESS_TEXT.getCssId());
+								resp1.setId(CssId.SUCCESS_TEXT.getCssId());
+							}
+							else
+							{
+								resp1.setText("Unluuuuuuuuuuucky. I am master and creator!");
+								resp.setId(CssId.FAIL_TEXT.getCssId());
+								resp1.setId(CssId.FAIL_TEXT.getCssId());
+							}
+							
+							if (!timesShown)
+							{
+								vb.getChildren().add(resp);
+								vb.getChildren().add(resp1);
+								timesShown = true;
+							}
+						}	
+					}
+				}
+			}
+			catch (IOException f) 
+			{
+			    f.printStackTrace();
+			}
+		});		
+		
+		vb.getChildren().add(start);
+		vb.getChildren().add(submitTime);
+		vb.setAlignment(Pos.TOP_CENTER);
+		
+		Scene s = new Scene(vb, 600, 400);
+		return s;
 	}
 
 	private Scene feb21(Stage primaryStage)
@@ -321,7 +430,7 @@ public class Main extends Application
 		return gs;
 	}
 
-	private Scene feb19(Stage primaryStage, int i)
+	private Scene feb22(Stage primaryStage, int i)
 	{
 		String q1 = "1. What theorem was Mike trying to prove when he fell over in the kitchen?";
 		String q2 = "2. Whose pint glass did I break before we went out on that same night?";
@@ -625,6 +734,7 @@ public class Main extends Application
 		back.setOnAction( (e) -> {
 			start(primaryStage);
 			tf2Shown = false;
+			timesShown = false;
 			counter = 0;
 		});
 	}
@@ -685,7 +795,7 @@ public class Main extends Application
 			else
 				s2Response = "These aren't cool (and probably not games either for that matter).";
 		}
-		else if (i == 19)
+		else if (i == 22)
 		{
 			if (s1.equals(correct1))
 			{
