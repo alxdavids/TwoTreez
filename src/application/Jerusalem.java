@@ -1,17 +1,12 @@
 package application;
 	
-import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Vector;
 
-import application.Main.FilePaths;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -98,10 +93,8 @@ public class Jerusalem extends Application
 			final int dateModifier = i+14;
 			button.setText("" + dateModifier);
 			
-			//Need add this
-			//Calendar cal = Calendar.getInstance();
-			//int dateValue = cal.get(Calendar.DAY_OF_MONTH);
-			int dateValue = 24;
+			Calendar cal = Calendar.getInstance();
+			int dateValue = cal.get(Calendar.DAY_OF_MONTH) + 12;
 			
 			if (dateModifier>dateValue)
 				button.setDisable(true);
@@ -169,7 +162,50 @@ public class Jerusalem extends Application
 
 	private Scene feb23(Stage primaryStage)
 	{
-		return null;
+		VBox vb = new VBox(10);
+		vb.setPadding(new Insets(10,10,10,10));
+		Text header = new Text("Guess who's back?");
+		Button back = new Button();
+		initBackButton(back, primaryStage);
+		
+		HBox hb = new HBox(200);
+		hb.getChildren().add(header);
+		hb.getChildren().add(back);
+		
+		Image ba = new Image(this.getClass().getResource("boyAlex.png").toString());
+		ImageView iv = new ImageView(ba);
+		
+		ToggleGroup tg1 = new ToggleGroup();
+		RadioButton rb = new RadioButton();
+		rb.setToggleGroup(tg1);
+		rb.setText("Boy alex");
+		Text resp = new Text();
+		
+		Button submit = new Button();
+		submit.setText("Submit answers...");
+		submit.setOnAction( (e) -> {
+			RadioButton rb1 = (RadioButton)tg1.getSelectedToggle();
+			if (rb1 == null)
+			{
+				resp.setText(":(");
+				resp.setId(CssId.FAIL_TEXT.getCssId());
+			}
+			else
+			{
+				resp.setText(":)");
+				resp.setId(CssId.SUCCESS_TEXT.getCssId());
+			}
+		});
+		
+		vb.getChildren().add(hb);
+		vb.getChildren().add(iv);
+		vb.getChildren().add(rb);
+		vb.getChildren().add(resp);
+		vb.getChildren().add(submit);
+		vb.setAlignment(Pos.CENTER);
+		
+		Scene s = new Scene(vb,400,600);
+		return s;
 	}
 
 	private Scene feb19(Stage primaryStage)
@@ -784,7 +820,7 @@ public class Jerusalem extends Application
 			else if (s1.equals(wrong1))
 				s1Response = "Nope, I'm afraid this was in 2014 - double denial.";
 			else 
-				s1Response = "Still no, I really hope you didn't choose one of these.";
+				s1Response = "I really hope you didn't choose this answer. That would be a gross misjudgement.";
 
 			if (s2.equals(wrong2)) 
 				s2Response = "It has a similar function but this isn't as cool as the right answer...";
