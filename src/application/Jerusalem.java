@@ -1,12 +1,16 @@
 package application;
 	
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Vector;
 
+import application.Main.FilePaths;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -47,6 +51,7 @@ public class Jerusalem extends Application
 	boolean errorShown = false;
 	boolean timesShown = false;
 	boolean tf2Shown = false;
+	boolean firstGo = false;
 	int counter = 0;
 	@Override
 	public void start(Stage primaryStage) 
@@ -64,9 +69,27 @@ public class Jerusalem extends Application
 			BorderPane.setAlignment(text, Pos.CENTER);
 					
 			addButtons(root, primaryStage);
-			root.setBottom(terribleCss);
+
 			root.setRight(info);
 			BorderPane.setAlignment(info, Pos.CENTER_RIGHT);
+			
+			int overallScore = 0;
+			for (int i=14; i<24; i++)
+			{
+				String scoreString = checkFirstGoAndScore(i, true, false);
+				if (!scoreString.isEmpty())
+				{
+					int score = Integer.parseInt(scoreString.trim());
+					overallScore = overallScore + score;
+				}
+			}
+			
+			HBox hb = new HBox(200);
+			Text score = new Text("Score: " +overallScore);		
+			score.setId(CssId.QUESTION_TEXT.getCssId());
+			hb.getChildren().add(terribleCss);
+			hb.getChildren().add(score);
+			root.setBottom(hb);
 			
 			Scene openingScene = new Scene(root,600,400);
 			openingScene.getStylesheets().add(getClass().getResource("treez.css").toExternalForm());
@@ -94,7 +117,7 @@ public class Jerusalem extends Application
 			button.setText("" + dateModifier);
 			
 			Calendar cal = Calendar.getInstance();
-			int dateValue = cal.get(Calendar.DAY_OF_MONTH) + 12;
+			int dateValue = cal.get(Calendar.DAY_OF_MONTH) + 11;
 			
 			if (dateModifier>dateValue)
 				button.setDisable(true);
@@ -118,7 +141,7 @@ public class Jerusalem extends Application
 			newScene = feb14(primaryStage, i);
 			break;
 		case 15:
-			newScene = feb15(primaryStage);
+			newScene = feb15(primaryStage, i);
 			break;
 		case 16:
 			newScene = feb16(primaryStage);
@@ -127,22 +150,22 @@ public class Jerusalem extends Application
 			newScene = feb17(primaryStage, i);
 			break;
 		case 18:
-			newScene = feb18(primaryStage);
+			newScene = feb18(primaryStage, i);
 			break;
 		case 19:
-			newScene = feb19(primaryStage);
+			newScene = feb19(primaryStage, i);
 			break;
 		case 20:
-			newScene = feb20(primaryStage);
+			newScene = feb20(primaryStage, i);
 			break;
 		case 21:
-			newScene = feb21(primaryStage);
+			newScene = feb21(primaryStage, i);
 			break;
 		case 22:
 			newScene = feb22(primaryStage, i);
 			break;
 		case 23:
-			newScene = feb23(primaryStage);
+			newScene = feb23(primaryStage, i);
 			break;
 		}
 		
@@ -160,7 +183,7 @@ public class Jerusalem extends Application
 		primaryStage.show();
 	}
 
-	private Scene feb23(Stage primaryStage)
+	private Scene feb23(Stage primaryStage, int i)
 	{
 		VBox vb = new VBox(10);
 		vb.setPadding(new Insets(10,10,10,10));
@@ -194,6 +217,12 @@ public class Jerusalem extends Application
 			{
 				resp.setText(":)");
 				resp.setId(CssId.SUCCESS_TEXT.getCssId());
+				checkFirstGoAndScore(i, false, true);
+				
+				if (firstGo)
+				{
+					writeScoreToFile(1, i);
+				}
 			}
 		});
 		
@@ -208,7 +237,7 @@ public class Jerusalem extends Application
 		return s;
 	}
 
-	private Scene feb19(Stage primaryStage)
+	private Scene feb19(Stage primaryStage, int i)
 	{		
 		VBox vb = new VBox(15);
 		vb.setPadding(new Insets(15,15,15,15));
@@ -279,6 +308,13 @@ public class Jerusalem extends Application
 								resp1.setText("I concede that you are the finer player! Damn you...");
 								resp.setId(CssId.SUCCESS_TEXT.getCssId());
 								resp1.setId(CssId.SUCCESS_TEXT.getCssId());
+								
+								checkFirstGoAndScore(i, false, true);
+								
+								if (firstGo)
+								{
+									writeScoreToFile(1, i);
+								}
 							}
 							else
 							{
@@ -311,7 +347,7 @@ public class Jerusalem extends Application
 		return s;
 	}
 
-	private Scene feb21(Stage primaryStage)
+	private Scene feb21(Stage primaryStage, int i)
 	{
 		BorderPane bp = new BorderPane();
 		bp.setPadding(new Insets(25,25,25,25));
@@ -343,15 +379,27 @@ public class Jerusalem extends Application
 			String line = tf.getText();
 			if (!line.isEmpty())
 			{
+				boolean success = false;
 				if (line.equalsIgnoreCase("Ølbaren"))
 				{
 					resp.setText("Ja, godt gået!");
 					resp.setId(CssId.SUCCESS_TEXT.getCssId());
+					success=true;
 				}
 				else
 				{
 					resp.setText("Nope - think about bars and Ø's.");
 					resp.setId(CssId.FAIL_TEXT.getCssId());
+				}
+				
+				checkFirstGoAndScore(i, false, true);
+				
+				if (firstGo)
+				{
+					if (success)
+						writeScoreToFile(1, i);
+					else
+						writeScoreToFile(0, i);
 				}
 			}
 		});
@@ -365,7 +413,7 @@ public class Jerusalem extends Application
 		return s;
 	}
 
-	private Scene feb20(Stage primaryStage)
+	private Scene feb20(Stage primaryStage, int i)
 	{		
 		VBox vb = new VBox(10);
 		HBox hb = new HBox(410);
@@ -391,6 +439,8 @@ public class Jerusalem extends Application
 		submit.setText("Submit answers...");
 		submit.setOnAction( (e) -> {
 			String line = tf1.getText();
+			boolean success1 = false;
+			boolean doneAlready = false;
 			if (!line.isEmpty() || !tf2Shown)
 			{
 				if (!tf2Shown)
@@ -409,9 +459,17 @@ public class Jerusalem extends Application
 						vb.getChildren().add(hint2);
 						vb.getChildren().add(submit);
 						tf2Shown = true;
+						
+						checkFirstGoAndScore(i, false, true);
+						
+						if (firstGo && !doneAlready)
+						{
+							success1 = true;
+						}
 					}
 					else
 					{
+						doneAlready = true;
 						counter++;
 						if (counter<2)
 						{
@@ -433,6 +491,7 @@ public class Jerusalem extends Application
 				}
 				else
 				{
+					boolean success2 = false;
 					String line2 = tf2.getText();
 					if (!line2.isEmpty())
 					{
@@ -449,6 +508,18 @@ public class Jerusalem extends Application
 							resp2.setId(CssId.FAIL_TEXT.getCssId());
 							hint2.setId(CssId.FAIL_TEXT.getCssId());
 						}
+					}
+					
+					checkFirstGoAndScore(i, false, true);
+					
+					if (firstGo)
+					{
+						if (success1 && success2)
+							writeScoreToFile(2, i);
+						else if (success1 || success2)
+							writeScoreToFile(1, i);
+						else
+							writeScoreToFile(0, i);
 					}
 				}
 			}
@@ -490,7 +561,7 @@ public class Jerusalem extends Application
 								correct1, correct2, wrong1, wrong2);
 	}
 
-	private Scene feb18(Stage primaryStage)
+	private Scene feb18(Stage primaryStage, int i)
 	{
 		VBox vb = new VBox(20);
 		HBox hb = new HBox(340);
@@ -517,17 +588,29 @@ public class Jerusalem extends Application
 			RadioButton rb1 = (RadioButton)tg1.getSelectedToggle();
 			if (rb1 != null)
 			{
+				boolean success = false;
 				errorShown = false;
 				String answer = rb1.getText();
 				if (answer.equals("Bayern Munich"))
 				{
 					response.setText("Correct. He went on to inspire a famous comeback from 3-1 down against England.");
 					response.setId(CssId.SUCCESS_TEXT.getCssId());
+					success = true;
 				}
 				else
 				{
 					response.setText("Noooooo! You can't have forgotten such a majestic performance??");
 					response.setId(CssId.FAIL_TEXT.getCssId());
+				}
+				
+				checkFirstGoAndScore(i, false, true);
+				
+				if (firstGo)
+				{
+					if (success)
+						writeScoreToFile(1, i);
+					else
+						writeScoreToFile(0, i);
 				}
 			}
 			else if (!errorShown)
@@ -604,7 +687,7 @@ public class Jerusalem extends Application
 		return scene;
 	}
 
-	private Scene feb15(Stage primaryStage)
+	private Scene feb15(Stage primaryStage, int i)
 	{
 		BorderPane bp = new BorderPane();
 		bp.setPadding(new Insets(10,10,10,10));
@@ -636,11 +719,13 @@ public class Jerusalem extends Application
 			String answer = line.getText();
 			if (!errorShown && !answer.isEmpty())
 			{
+				boolean success = false;
 				if (answer.equalsIgnoreCase(FEB_15_POEM_LAST_LINE))
 				{
 					result.setText("Congratulations, you remember a lot of stuff! Although"
 							+ " I suspect you didn't get it right on\nyour first attempt...");
 					result.setId(CssId.SUCCESS_TEXT.getCssId());
+					success = true;
 				}
 				else
 				{
@@ -648,6 +733,16 @@ public class Jerusalem extends Application
 								+ "this one so it was bordering on an\nunfair question haha."
 								+ " Try writing: '" + FEB_15_POEM_LAST_LINE + "'");
 					result.setId(CssId.FAIL_TEXT.getCssId());
+				}
+				
+				checkFirstGoAndScore(i, false, true);
+				
+				if (firstGo)
+				{
+					if (success)
+						writeScoreToFile(1, i);
+					else
+						writeScoreToFile(0, i);
 				}
 			}
 		});
@@ -771,6 +866,7 @@ public class Jerusalem extends Application
 			start(primaryStage);
 			tf2Shown = false;
 			timesShown = false;
+			firstGo = false;
 			counter = 0;
 		});
 	}
@@ -788,6 +884,8 @@ public class Jerusalem extends Application
 		String s2Response = "";
 		boolean success1 = false;
 		boolean success2 = false;
+		
+		checkFirstGoAndScore(i, false, true);
 		
 		if (i == 14)
 		{
@@ -853,6 +951,21 @@ public class Jerusalem extends Application
 				s2Response = "Nope, I probably wouldn't have heard it the end of it had I broken one of theirs.";
 		}
 		
+		if (firstGo)
+		{
+			int score = 0;
+			if (success1)
+			{
+				score++;
+			}
+			if (success2)
+			{
+				score++;
+			}
+			writeScoreToFile(score, i);
+			firstGo = false;
+		}
+		
 		result1Text.setText(s1Response);
 		result2Text.setText(s2Response);
 		
@@ -865,6 +978,53 @@ public class Jerusalem extends Application
 			result2Text.setId(CssId.SUCCESS_TEXT.getCssId());
 		else
 			result2Text.setId(CssId.FAIL_TEXT.getCssId());
+	}
+	
+	private String checkFirstGoAndScore(int i, boolean getScore, boolean checkFirstGo) 
+	{		
+		try
+		{
+			File scores = getScoreFile();
+			@SuppressWarnings("resource")
+			BufferedReader br = new BufferedReader(new FileReader(scores));
+			boolean found = false;
+			boolean linesFound = false;
+			boolean valueFound = false;
+			while (!found)
+			{
+				String line = br.readLine();
+				if (line != null)
+				{
+					int index = line.indexOf(i + ":");
+
+					if (index == -1)
+					{
+						linesFound = true;
+						continue;
+					}
+					else if (getScore)
+					{
+						found = true;
+						return line.substring(index+3);
+					}
+					else
+					{
+						valueFound = true;
+					}
+				}
+				else 
+				{
+					found = true;
+					if (!linesFound || !valueFound)
+					{
+						firstGo = true;
+					}
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return "";
 	}
 
 	private HBox radioButtonAnswers(String s1, String s2, String s3, String s4, ToggleGroup group) 
@@ -885,6 +1045,57 @@ public class Jerusalem extends Application
 	    hb1.getChildren().add(radio3);
 	    hb1.getChildren().add(radio4);
 		return hb1;
+	}
+	
+	private void writeScoreToFile(int score, int i)
+	{			
+		try
+		{
+			File file = getScoreFile();	
+			BufferedReader br = new BufferedReader(new FileReader(file));
+			String line = br.readLine();
+			ArrayList<String> lines = new ArrayList<>();
+			
+			while (line != null)
+			{
+				lines.add(line);
+				line = br.readLine();
+			}
+			br.close();
+			
+			String newLine = i+":"+score;
+			lines.add(newLine);
+			
+			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+			for (String lineToWrite : lines)
+			{
+				bw.write(lineToWrite);
+			    bw.newLine();
+			}
+			bw.close();
+		} 
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	private File getScoreFile() throws IOException
+	{
+		File folder = new File("D:\\TwoTreez");
+		File file = new File("D:\\TwoTreez\\score.txt");
+
+		if (!folder.exists())   
+		{
+			folder.mkdir();		
+			file.createNewFile();
+		}
+		else if (!file.exists())
+		{
+			file.createNewFile();
+		}
+		
+		return file;
 	}
 
 	public static void main(String[] args) 
